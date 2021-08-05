@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        display: block;
+        margin: 20px auto 0;
+        border: thin inset #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="400" height="400"> NOT SUPPORT CANVAS </canvas>
+    <script>
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+      const { width, height } = canvas
+      const margin = 35
+      const radius = width / 2 - margin
+      const handT = width / 25
+      const hourHandT = width / 10
+      const numeralS = 20
+      const handR = radius + numeralS
+      // 绘制圆形
+      const drawCircle = (ctx, x, y, radius) => {
+        ctx.beginPath()
+        ctx.arc(x, y, radius, 0, Math.PI * 2, true)
+        ctx.stroke()
+      }
+
+      // 绘制原点
+      const drawCenter = (x, y, r = 5) => {
+        ctx.beginPath()
+        ctx.arc(x, y, r, 0, Math.PI * 2, true)
+        ctx.fill()
+      }
+
+      // 绘制数字
+      const drawNumerals = (ctx, x, y, handR, fontWeight = 15) => {
+        const numerals = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        let angel = 0
+        let numeralWidth = 0
+        ctx.beginPath()
+        ctx.font = `${fontWeight}px Arial`
+        numerals.forEach((numeral) => {
+          angel = (Math.PI / 6) * (numeral - 3)
+          numeralWidth = ctx.measureText(numeral).width
+          ctx.fillText(
+            numeral,
+            x + Math.cos(angel) * handR - numeralWidth / 2,
+            y + Math.sin(angel) * handR + fontWeight / 3
+          )
+        })
+      }
+      // 绘制指针
+      const drawHand = (ctx, x, y, loc, isHour, radius, handT, hourHandT) => {
+        ctx.beginPath()
+        const angle = Math.PI * 2 * (loc / 60) - Math.PI / 2
+        const handR = isHour ? radius - handT - hourHandT : radius - handT
+
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + Math.cos(angle) * handR, y + Math.sin(angle) * handR)
+        ctx.stroke()
+      }
+      // 绘制三根指针
+      const drawHands = (ctx, x, y, radius, handT, hourHandT) => {
+        const date = new Date()
+        let hour = date.getHours()
+        hour = hour > 12 ? hour - 12 : hour
+        drawHand(
+          ctx,
+          x,
+          y,
+          hour * 5 + (date.getMinutes() / 60) * 5,
+          true,
+          radius,
+          handT,
+          hourHandT
+        )
+        drawHand(ctx, x, y, date.getMinutes(), false, radius, handT, hourHandT)
+        drawHand(ctx, x, y, date.getSeconds(), false, radius, handT, hourHandT)
+      }
+      const drawClock = () => {
+        ctx.clearRect(0, 0, width, height)
+        drawCircle(ctx, width / 2, height / 2, radius)
+        drawCenter(width / 2, height / 2)
+        drawNumerals(ctx, width / 2, height / 2, handR)
+        drawHands(ctx, width / 2, height / 2, radius, handT, hourHandT)
+        window.requestAnimationFrame(drawClock)
+      }
+      window.requestAnimationFrame(drawClock)
+    </script>
+  </body>
+</html>
