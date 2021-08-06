@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .box {
+        height: 20px;
+        line-height: 20px;
+        padding-left: 20px;
+      }
+      canvas {
+        display: block;
+        margin: 0 0 0 20px;
+        border: 1px solid #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box"></div>
+    <canvas id="canvas" width="400" height="400"> NOT SUPPORT CANVAS </canvas>
+    <script>
+      const box = document.getElementsByClassName('box')[0]
+      const canvas = document.querySelector('#canvas')
+      const context = canvas.getContext('2d')
+      const rect = canvas.getBoundingClientRect()
+      const { width, height } = canvas
+
+      canvas.addEventListener('mousemove', (e) => {
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        context.clearRect(0, 0, width, height)
+        drawGuideLine(context, x, y)
+        box.innerHTML = `(${x}, ${y})`
+      })
+
+      const drawGuideLine = (ctx, x, y) => {
+        ctx.save()
+        ctx.strokeStyle = 'blue'
+        ctx.lineWidth = 1
+        drawHGuideLine(ctx, y)
+        drawVGuideLine(ctx, x)
+        ctx.restore()
+      }
+
+      const drawHGuideLine = (ctx, y) => {
+        ctx.beginPath()
+        ctx.moveTo(0, y)
+        ctx.lineTo(width, y)
+        ctx.stroke()
+      }
+
+      const drawVGuideLine = (ctx, x) => {
+        ctx.beginPath()
+        ctx.moveTo(x, 0)
+        ctx.lineTo(x, height)
+        ctx.stroke()
+      }
+    </script>
+  </body>
+</html>
