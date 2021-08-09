@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      .reset {
+        display: block;
+        margin: 20px 0 0 20px;
+      }
+
+      .box {
+        display: inline-flex;
+        position: relative;
+        margin: 20px 0 0 20px;
+      }
+
+      canvas {
+        display: block;
+      }
+
+      .box-rect {
+        display: none;
+        position: absolute;
+        border: 3px solid yellow;
+        cursor: crosshair;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <canvas id="canvas" width="800" height="520"></canvas>
+      <div class="box-rect"></div>
+    </div>
+    <button class="reset">reset</button>
+    <script>
+      const resetButton = document.querySelector('.reset')
+      const box = document.querySelector('.box')
+      const boxRect = document.querySelector('.box-rect')
+      const canvas = document.querySelector('#canvas')
+      const ctx = canvas.getContext('2d')
+      const { width, height } = canvas
+      const rect = canvas.getBoundingClientRect()
+
+      const img = new Image()
+      img.src = '../assets/images/arch.png'
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, width, height)
+      }
+
+      resetButton.addEventListener('click', () => {
+        if (img) {
+          ctx.clearRect(0, 0, width, height)
+          ctx.drawImage(img, 0, 0, width, height)
+        }
+      })
+
+      const startRect = {
+        x: 0,
+        y: 0
+      }
+      const endRect = { x: 0, y: 0 }
+      const targetRect = {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0
+      }
+      let selecting = false
+      canvas.addEventListener('mousedown', (e) => {
+        if (selecting) {
+          return
+        }
+        boxRect.style.display = 'none'
+        selecting = true
+        startRect.x = e.clientX
+        startRect.y = e.clientY
+      })
+
+      window.addEventListener('mousemove', (e) => {
+        if (!selecting) {
+          return
+        }
+        endRect.x = e.clientX
+        endRect.y = e.clientY
+        const absLeft =
+          startRect.x < endRect.x
+            ? startRect.x - rect.left
+            : endRect.x - rect.left
+        const absTop =
+          startRect.y < endRect.y
+            ? startRect.y - rect.top
+            : endRect.y - rect.top
+        const absWidth = Math.abs(endRect.x - startRect.x)
+        const absHeight = Math.abs(endRect.y - startRect.y)
+        const width = Math.min(
+          absWidth,
+          startRect.x < endRect.x
+            ? canvas.width + rect.left - startRect.x
+            : startRect.x - rect.left
+        )
+        const height = Math.min(
+          absHeight,
+          startRect.y < endRect.y
+            ? canvas.height + rect.top - startRect.y
+            : startRect.y - rect.top
+        )
+        const left = Math.max(0, absLeft)
+        const top = Math.max(0, absTop)
+        boxRect.style.left = `${left}px`
+        boxRect.style.top = `${top}px`
+        boxRect.style.width = `${width}px`
+        boxRect.style.height = `${height}px`
+        boxRect.style.display = 'block'
+        targetRect.x = left
+        targetRect.y = top
+        targetRect.width = width
+        targetRect.height = height
+      })
+
+      window.addEventListener('mouseup', () => {
+        if (!selecting) {
+          return
+        }
+        selecting = false
+        try {
+          ctx.drawImage(
+            canvas,
+            targetRect.x,
+            targetRect.y,
+            targetRect.width,
+            targetRect.height,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          )
+        } catch (error) {
+          console.log('error')
+        }
+        boxRect.style.display = 'none'
+      })
+    </script>
+  </body>
+</html>
