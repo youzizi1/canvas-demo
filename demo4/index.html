@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      canvas {
+        display: block;
+        margin: 0 0 0 20px;
+        border: 1px solid #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="400" height="400"> NOT SUPPORT CANVAS </canvas>
+    <button class="start">start</button>
+    <script>
+      const startButton = document.querySelector('.start')
+      const canvas = document.querySelector('#canvas')
+      const ctx = canvas.getContext('2d')
+      const { width, height } = canvas
+
+      const genRandomColor = () => {
+        const colors = '0123456789abcdef'
+        let randomColor = '#'
+        for (let i = 1; i <= 6; i++) {
+          randomColor += colors[Math.floor(Math.random() * 16)]
+        }
+        return randomColor
+      }
+
+      const genRandomRadius = (lowLimit, highLimit) => {
+        return Math.floor(Math.random() * (highLimit - lowLimit + 1) + lowLimit)
+      }
+
+      class Ball {
+        constructor(ctx, color, x = 0, y = 0, r = 12) {
+          this.ctx = ctx
+          this.color = color
+          this.x = x
+          this.y = y
+          this.r = r
+          this.vx = (Math.random() * 2 - 1) * 3
+          this.vy = (Math.random() * 2 - 1) * 3
+        }
+
+        fill() {
+          this.ctx.save()
+          this.ctx.translate(this.x, this.y)
+          this.ctx.fillStyle = this.color
+          this.ctx.beginPath()
+          this.ctx.arc(0, 0, this.r, Math.PI * 2, false)
+          this.ctx.fill()
+          this.ctx.restore()
+        }
+
+        run() {
+          const { width, height } = ctx.canvas
+          this.x += this.vx
+          this.y += this.vy
+
+          if (this.x < this.r) {
+            this.x = this.r
+            this.vx = -this.vx
+          } else if (this.x > width - this.r) {
+            this.x = width - this.r
+            this.vx = -this.vx
+          } else if (this.y < this.r) {
+            this.y = this.r
+            this.vy = -this.vy
+          } else if (this.y > height - this.r) {
+            this.y = height - this.r
+            this.vy = -this.vy
+          }
+        }
+      }
+
+      const balls = []
+      for (let i = 0; i < 50; i++) {
+        balls.push(
+          new Ball(
+            ctx,
+            genRandomColor(),
+            width / 2,
+            height / 2,
+            genRandomRadius(12, 36)
+          )
+        )
+      }
+
+      const step = () => {
+        window.requestAnimationFrame(step)
+        ctx.clearRect(0, 0, width, height)
+        balls.forEach((ball) => {
+          ball.run()
+          ball.fill()
+        })
+      }
+      startButton.addEventListener('click', step)
+    </script>
+  </body>
+</html>
