@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        display: inline-block;
+        margin: 20px auto 0;
+        border: thin inset #aaa;
+      }
+
+      .img {
+        display: none;
+      }
+
+      .snapshot {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <img class="img"></img>
+    <button class="snapshot">snapshot</button>
+    <script>
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+      ctx.font = '40px Arial'
+      ctx.fillStyle = 'blue'
+      ctx.strokeStyle = 'red'
+      ctx.fillText('hello world', canvas.width / 4, canvas.height / 2)
+      ctx.strokeText('hello world', canvas.width / 4, canvas.height / 2)
+
+      // snapshot
+      const snapshot = document.querySelector('.snapshot')
+      const img = document.querySelector('.img')
+      snapshot.addEventListener('click', () => {
+        const url = canvas.toDataURL()
+        img.src = url
+        img.style.display = 'inline-block'
+      })
+    </script>
+  </body>
+</html>
