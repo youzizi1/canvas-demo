@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        display: block;
+        margin: 20px auto 0;
+        border: thin inset #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="600" height="300"></canvas>
+    <div>
+      <button class="repeatButton">repeat</button>
+      <button class="repeatXButton">repeat X</button>
+      <button class="repeatYButton">repeat Y</button>
+      <button class="repeatNButton">no repeat</button>
+    </div>
+    <script>
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+      const repeatButton = document.querySelector('.repeatButton')
+      const repeatXButton = document.querySelector('.repeatXButton')
+      const repeatYButton = document.querySelector('.repeatYButton')
+      const repeatNButton = document.querySelector('.repeatNButton')
+
+      const img = new Image()
+      img.src = '../assets/images/smalltree.png'
+
+      img.onload = () => {
+        draw(ctx, img)
+      }
+
+      const draw = (ctx, img, repeatType = 'repeat') => {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        const pattern = ctx.createPattern(img, repeatType)
+        ctx.fillStyle = pattern
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        ctx.fill()
+      }
+
+      repeatButton.addEventListener('click', () => {
+        draw(ctx, img, 'repeat')
+      })
+
+      repeatXButton.addEventListener('click', () => {
+        draw(ctx, img, 'repeat-x')
+      })
+
+      repeatYButton.addEventListener('click', () => {
+        draw(ctx, img, 'repeat-y')
+      })
+
+      repeatNButton.addEventListener('click', () => {
+        draw(ctx, img, 'no-repeat')
+      })
+    </script>
+  </body>
+</html>
