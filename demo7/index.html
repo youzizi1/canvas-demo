@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        display: block;
+        margin: 20px auto 0;
+        border: thin inset #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="600" height="300"></canvas>
+    <script>
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+      const drawLinearGradient = (ctx) => {
+        ctx.save()
+        ctx.beginPath()
+        const gradient = ctx.createLinearGradient(
+          0,
+          0,
+          ctx.canvas.width / 2,
+          ctx.canvas.height / 2
+        )
+        gradient.addColorStop(0, 'blue')
+        gradient.addColorStop(0.25, 'white')
+        gradient.addColorStop(0.5, 'purple')
+        gradient.addColorStop(0.75, 'red')
+        gradient.addColorStop(1, 'yellow')
+        ctx.fillStyle = gradient
+        ctx.rect(0, 0, ctx.canvas.width / 2, ctx.canvas.height / 2)
+        ctx.fill()
+        ctx.restore()
+      }
+
+      const drawRadialGradient = (ctx) => {
+        ctx.save()
+        ctx.beginPath()
+        const gradient = ctx.createRadialGradient(
+          canvas.width / 2,
+          canvas.height,
+          10,
+          canvas.width / 2,
+          0,
+          100
+        )
+        gradient.addColorStop(0, 'blue')
+        gradient.addColorStop(0.25, 'white')
+        gradient.addColorStop(0.5, 'purple')
+        gradient.addColorStop(0.75, 'red')
+        gradient.addColorStop(1, 'yellow')
+        ctx.fillStyle = gradient
+        ctx.rect(
+          ctx.canvas.width / 2,
+          ctx.canvas.height / 2,
+          ctx.canvas.width * 0.8,
+          ctx.canvas.height * 0.8
+        )
+        ctx.fill()
+        ctx.restore()
+      }
+
+      drawLinearGradient(ctx)
+      drawRadialGradient(ctx)
+    </script>
+  </body>
+</html>
