@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        display: block;
+        margin: 20px auto 0;
+        border: thin inset #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <script>
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+
+      const drawRect = (ctx) => {
+        ctx.save()
+        ctx.strokeStyle = 'blue'
+        ctx.fillStyle = 'red'
+        ctx.lineWidth = '4'
+        // stroke
+        ctx.beginPath()
+        ctx.rect(80, 20, 120, 60)
+        ctx.stroke()
+        // fill
+        ctx.beginPath()
+        ctx.rect(220, 20, 120, 60)
+        ctx.fill()
+        ctx.restore()
+      }
+
+      drawRect(ctx)
+
+      const drawCircle = (ctx) => {
+        ctx.save()
+        ctx.strokeStyle = 'yellow'
+        ctx.fillStyle = 'orange'
+        ctx.lineWidth = '2'
+        // stroke
+        ctx.beginPath()
+        ctx.arc(160, 160, 60, 0, (Math.PI * 3) / 2)
+        ctx.stroke()
+        // fill
+        ctx.beginPath()
+        ctx.arc(300, 160, 60, 0, (Math.PI * 3) / 2)
+        ctx.fill()
+        ctx.restore()
+      }
+      drawCircle(ctx)
+
+      const drawCircleClosed = (ctx) => {
+        ctx.save()
+        ctx.strokeStyle = 'green'
+        ctx.fillStyle = 'pink'
+        ctx.lineWidth = '3'
+        // stroke
+        ctx.beginPath()
+        ctx.arc(160, 320, 60, 0, (Math.PI * 3) / 2)
+        ctx.closePath()
+        ctx.stroke()
+        // fill
+        ctx.beginPath()
+        ctx.arc(300, 320, 60, 0, (Math.PI * 3) / 2)
+        ctx.closePath()
+        ctx.fill()
+        ctx.restore()
+      }
+      drawCircleClosed(ctx)
+    </script>
+  </body>
+</html>
