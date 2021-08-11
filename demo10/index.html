@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        display: block;
+        margin: 20px auto 0;
+        border: thin inset #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <button class="different">不同方向</button
+    ><button class="same">相同方向</button>
+    <script>
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+      const differentButton = document.querySelector('.different')
+      const sameButton = document.querySelector('.same')
+
+      // golbal fill style
+      ctx.fillStyle = 'pink'
+
+      const drawCircle = (ctx, type) => {
+        ctx.beginPath()
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        if (type === 'different') {
+          ctx.arc(200, 200, 40, 0, Math.PI * 2, true)
+          ctx.arc(200, 200, 80, 0, Math.PI * 2, false)
+        } else {
+          ctx.arc(200, 200, 40, 0, Math.PI * 2, true)
+          ctx.arc(200, 200, 80, 0, Math.PI * 2, true)
+        }
+        ctx.fill()
+      }
+
+      differentButton.addEventListener('click', () => {
+        drawCircle(ctx, 'different')
+      })
+
+      sameButton.addEventListener('click', () => {
+        drawCircle(ctx, 'same')
+      })
+    </script>
+  </body>
+</html>
