@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        display: block;
+        margin: 20px auto 0;
+        border: thin inset #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <script>
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+      ctx.lineWidth = 1
+
+      ctx.beginPath()
+      ctx.moveTo(50, 10)
+      ctx.lineTo(450, 10)
+      ctx.stroke()
+
+      ctx.beginPath()
+      ctx.moveTo(50.5, 50.5)
+      ctx.lineTo(450.5, 50.5)
+      ctx.stroke()
+
+      const drawGrid = (ctx, color, stepX, stepY) => {
+        ctx.save()
+        ctx.strokeStyle = color
+        ctx.lineWidth = 0.5
+        for (let i = stepX + 0.5; i < ctx.canvas.width; i += stepX) {
+          ctx.beginPath()
+          ctx.moveTo(i, 0)
+          ctx.lineTo(i, ctx.canvas.height)
+          ctx.stroke()
+        }
+        for (let j = stepY + 0.5; j < ctx.canvas.height; j += stepY) {
+          ctx.beginPath()
+          ctx.moveTo(0, j)
+          ctx.lineTo(ctx.canvas.width, j)
+          ctx.stroke()
+        }
+        ctx.restore()
+      }
+      drawGrid(ctx, 'lightgray', 10, 10)
+    </script>
+  </body>
+</html>
