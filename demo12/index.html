@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        display: block;
+        margin: 20px auto 0;
+        border: thin inset #aaa;
+      }
+
+      .box {
+        width: 600px;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <div class="box">
+      <label for="stroke-color"
+        >stroke color
+        <select id="stroke-color">
+          <option value="black">black</option>
+          <option value="blue">blue</option>
+          <option value="red">red</option>
+          <option value="green">green</option>
+          <option value="gold">gold</option>
+          <option value="pink">pink</option>
+        </select>
+      </label>
+      <label for="guide"
+        >guide line
+        <input type="checkbox" id="guide" value="guide" />
+      </label>
+      <button class="clear">clear all</button>
+    </div>
+    <script>
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+      const clearButton = document.querySelector('.clear')
+      const canvasRect = canvas.getBoundingClientRect()
+      const strokeColorSelect = document.querySelector('#stroke-color')
+      const guideCheckbox = document.querySelector('#guide')
+      let strokeStyle =
+        strokeColorSelect.options[strokeColorSelect.selectedIndex].value
+      let guideChecked = guideCheckbox.checked
+      let initialCanvas = ctx.getImageData(
+        0,
+        0,
+        ctx.canvas.width,
+        ctx.canvas.height
+      )
+
+      // 绘制网格
+      const drawGrid = (ctx) => {
+        ctx.save()
+        ctx.strokeStyle = 'lightgray'
+        for (let i = 10.5; i < ctx.canvas.width; i += 10) {
+          ctx.beginPath()
+          ctx.moveTo(i, 0)
+          ctx.lineTo(i, ctx.canvas.height)
+          ctx.stroke()
+        }
+        for (let j = 10.5; j < ctx.canvas.height; j += 10) {
+          ctx.beginPath()
+          ctx.moveTo(0, j)
+          ctx.lineTo(ctx.canvas.width, j)
+          ctx.stroke()
+        }
+        ctx.restore()
+      }
+      // 绘制辅助线
+      const drawGuideLine = (ctx, rect) => {
+        ctx.save()
+        ctx.strokeStyle = '#999'
+        ctx.beginPath()
+        ctx.moveTo(rect.x - canvasRect.left + 0.5, 0)
+        ctx.lineTo(rect.x - canvasRect.left + 0.5, ctx.canvas.height)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(0, rect.y - canvasRect.top + 0.5)
+        ctx.lineTo(ctx.canvas.width, rect.y - canvasRect.top + 0.5)
+        ctx.stroke()
+        ctx.restore()
+      }
+
+      // 绘制直线
+      const drawLine = (ctx, startRect, endRect) => {
+        ctx.save()
+        ctx.strokeStyle = strokeStyle
+        ctx.beginPath()
+        ctx.moveTo(startRect.x - canvasRect.left, startRect.y - canvasRect.top)
+        ctx.lineTo(endRect.x - canvasRect.left, endRect.y - canvasRect.top)
+        ctx.stroke()
+        ctx.restore()
+      }
+
+      const clearClickHandler = () => {
+        // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        // drawGrid(ctx)
+        ctx.putImageData(initialCanvas, 0, 0)
+      }
+
+      let lining = false
+      let lineStartRect = { x: 0, y: 0 }
+      let lineEndRect = { x: 0, y: 0 }
+      const canvasMouseDownHandler = (e) => {
+        if (lining) {
+          return
+        }
+        // prevent cursor change
+        e.preventDefault()
+        lining = true
+        lineStartRect = {
+          x: e.clientX,
+          y: e.clientY
+        }
+      }
+      // 最后做防抖
+      const windowMouseMoveHandler = (e) => {
+        if (lining) {
+          // prevent selections
+          e.preventDefault()
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+          drawGrid(ctx)
+          drawLine(ctx, lineStartRect, { x: e.clientX, y: e.clientY })
+          if (guideChecked) {
+            drawGuideLine(ctx, { x: e.clientX, y: e.clientY })
+          }
+        }
+      }
+
+      const canvasMouseUpHandler = (e) => {
+        if (lining) {
+          lineEndRect = {
+            x: e.clientX,
+            y: e.clientY
+          }
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+          drawGrid(ctx)
+          drawLine(ctx, lineStartRect, lineEndRect)
+          lining = false
+        }
+      }
+
+      const strokeColorHandler = (e) => {
+        strokeStyle =
+          strokeColorSelect.options[strokeColorSelect.selectedIndex].value
+      }
+
+      const guideCheckedHandler = () => {
+        guideChecked = guideCheckbox.checked
+      }
+
+      clearButton.addEventListener('click', clearClickHandler)
+      canvas.addEventListener('mousedown', canvasMouseDownHandler)
+      canvas.addEventListener('mouseup', canvasMouseUpHandler)
+      window.addEventListener('mousemove', windowMouseMoveHandler)
+      strokeColorSelect.addEventListener('change', strokeColorHandler)
+      guideCheckbox.addEventListener('change', guideCheckedHandler)
+
+      // 启动器
+      const setUp = () => {
+        drawGrid(ctx)
+        initialCanvas = ctx.getImageData(
+          0,
+          0,
+          ctx.canvas.width,
+          ctx.canvas.height
+        )
+      }
+      setUp()
+    </script>
+  </body>
+</html>
