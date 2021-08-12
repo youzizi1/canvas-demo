@@ -77,6 +77,7 @@
       const drawGuideLine = (ctx, rect) => {
         ctx.save()
         ctx.strokeStyle = '#999'
+        ctx.lineWidth = 0.5
         ctx.beginPath()
         ctx.moveTo(rect.x - canvasRect.left + 0.5, 0)
         ctx.lineTo(rect.x - canvasRect.left + 0.5, ctx.canvas.height)
@@ -100,9 +101,14 @@
       }
 
       const clearClickHandler = () => {
-        // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-        // drawGrid(ctx)
-        ctx.putImageData(initialCanvas, 0, 0)
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        drawGrid(ctx)
+        initialCanvas = ctx.getImageData(
+          0,
+          0,
+          ctx.canvas.width,
+          ctx.canvas.height
+        )
       }
 
       let lining = false
@@ -114,6 +120,12 @@
         }
         // prevent cursor change
         e.preventDefault()
+        initialCanvas = ctx.getImageData(
+          0,
+          0,
+          ctx.canvas.width,
+          ctx.canvas.height
+        )
         lining = true
         lineStartRect = {
           x: e.clientX,
@@ -125,8 +137,9 @@
         if (lining) {
           // prevent selections
           e.preventDefault()
-          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-          drawGrid(ctx)
+          // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+          // drawGrid(ctx)
+          ctx.putImageData(initialCanvas, 0, 0)
           drawLine(ctx, lineStartRect, { x: e.clientX, y: e.clientY })
           if (guideChecked) {
             drawGuideLine(ctx, { x: e.clientX, y: e.clientY })
@@ -140,8 +153,9 @@
             x: e.clientX,
             y: e.clientY
           }
-          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-          drawGrid(ctx)
+          // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+          // drawGrid(ctx)
+          ctx.putImageData(initialCanvas, 0, 0)
           drawLine(ctx, lineStartRect, lineEndRect)
           lining = false
         }
