@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        background-color: #eee;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      canvas {
+        display: block;
+        margin: 20px auto 0;
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+        background-color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="650" height="450"></canvas>
+    <script>
+      const canvas = document.getElementById('canvas')
+      const ctx = canvas.getContext('2d')
+
+      const drawGrid = (ctx) => {
+        ctx.save()
+        ctx.strokeStyle = 'lightgray'
+        for (let i = 10.5; i < ctx.canvas.width; i += 10) {
+          ctx.beginPath()
+          ctx.moveTo(i, 0)
+          ctx.lineTo(i, ctx.canvas.height)
+          ctx.stroke()
+        }
+        for (let j = 10.5; j < ctx.canvas.height; j += 10) {
+          ctx.beginPath()
+          ctx.moveTo(0, j)
+          ctx.lineTo(ctx.canvas.width, j)
+          ctx.stroke()
+        }
+        ctx.restore()
+      }
+      // 绘制中心点
+      const drawCentrePoint = (ctx) => {
+        ctx.save()
+        ctx.beginPath()
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)'
+        ctx.fillStyle = 'rgba(80, 190, 240, 0.6)'
+        ctx.arc(
+          ctx.canvas.width / 2,
+          ctx.canvas.height / 2,
+          10,
+          0,
+          Math.PI * 2,
+          false
+        )
+        ctx.stroke()
+        ctx.fill()
+        ctx.restore()
+      }
+      // 绘制中心线
+      const drawCentreLine = (ctx) => {
+        ctx.save()
+        ctx.strokeStyle = 'goldenrod'
+        ctx.fillStyle = 'rgba(250, 250, 0, 0.6)'
+        // 绘制线
+        ctx.beginPath()
+        ctx.moveTo(ctx.canvas.width / 2, ctx.canvas.height / 2)
+        ctx.lineTo(
+          ctx.canvas.width / 2 + (150 + 55) * Math.cos(15),
+          ctx.canvas.height / 2 + (150 + 55) * Math.sin(15)
+        )
+        ctx.stroke()
+        // 绘制圆
+        ctx.beginPath()
+        ctx.strokeStyle = 'rgba(100, 140, 230, 0.9)'
+        ctx.arc(
+          ctx.canvas.width / 2 + (150 + 55) * Math.cos(15),
+          ctx.canvas.height / 2 + (150 + 55) * Math.sin(15),
+          5,
+          0,
+          Math.PI * 2,
+          false
+        )
+        ctx.fill()
+        ctx.stroke()
+        ctx.restore()
+      }
+      // 绘制表盘
+      const drawRing = (ctx) => {
+        ctx.save()
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)'
+        ctx.shadowOffsetX = 3
+        ctx.shadowOffsetY = 3
+        ctx.shadowBlur = 6
+        ctx.beginPath()
+        drawOuterRing(ctx)
+        drawInnerRing(ctx)
+        ctx.restore()
+      }
+
+      const drawOuterRing = (ctx) => {
+        ctx.strokeStyle = 'rgba(100, 140, 230, 0.5)'
+        ctx.arc(
+          ctx.canvas.width / 2,
+          ctx.canvas.height / 2,
+          150 + 55,
+          0,
+          Math.PI * 2,
+          false
+        )
+        ctx.stroke()
+      }
+
+      const drawInnerRing = (ctx) => {
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)'
+        ctx.fillStyle = 'rgba(100, 140, 230, 0.1)'
+        ctx.arc(
+          ctx.canvas.width / 2,
+          ctx.canvas.height / 2,
+          150 + 35,
+          0,
+          Math.PI * 2,
+          true
+        )
+        ctx.stroke()
+        ctx.fill()
+      }
+
+      const drawTick = (ctx) => {
+        drawTickCircle(ctx)
+        drawTickLine(ctx)
+        drawTickCount(ctx)
+      }
+      const drawTickCircle = (ctx) => {
+        ctx.save()
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)'
+        ctx.beginPath()
+        ctx.arc(
+          ctx.canvas.width / 2,
+          ctx.canvas.height / 2,
+          150 + 25,
+          0,
+          Math.PI * 2,
+          false
+        )
+        ctx.stroke()
+        ctx.restore()
+      }
+      const drawTickLine = (ctx) => {
+        const radius = 150 + 35
+        const angleUnit = Math.PI / 64
+
+        ctx.save()
+        for (
+          let angle = 0, count = 0;
+          angle < Math.PI * 2;
+          angle += angleUnit, count += 2
+        ) {
+          const deltaR = count % 4 === 0 ? 10 : 5
+          ctx.beginPath()
+          ctx.moveTo(
+            ctx.canvas.width / 2 + Math.cos(angle) * (radius - deltaR),
+            ctx.canvas.height / 2 + Math.sin(angle) * (radius - deltaR)
+          )
+          ctx.lineTo(
+            ctx.canvas.width / 2 + Math.cos(angle) * radius,
+            ctx.canvas.height / 2 + Math.sin(angle) * radius
+          )
+
+          ctx.strokeStyle = 'rgba(100, 140, 230, 0.7)'
+          ctx.stroke()
+        }
+        ctx.restore()
+      }
+
+      const drawTickCount = (ctx) => {
+        const radius = 150 + 35
+        ctx.save()
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)'
+        ctx.shadowOffsetX = 2
+        ctx.shadowOffsetY = 2
+        ctx.shadowBlur = 4
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillStyle = 'rgba(0, 0, 230, 0.9)'
+        ctx.font = '12px Helvetica'
+        for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 8) {
+          ctx.beginPath()
+          ctx.fillText(
+            ((angle * 180) / Math.PI).toFixed(0),
+            ctx.canvas.width / 2 + Math.cos(angle) * (radius - 20),
+            ctx.canvas.height / 2 - Math.sin(angle) * (radius - 20)
+          )
+        }
+        ctx.restore()
+      }
+
+      const setup = () => {
+        drawGrid(ctx)
+        drawCentrePoint(ctx)
+        drawCentreLine(ctx)
+        drawRing(ctx)
+        drawTick(ctx)
+      }
+      setup()
+    </script>
+  </body>
+</html>
